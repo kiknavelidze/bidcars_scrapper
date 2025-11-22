@@ -26,8 +26,8 @@ jobs:
 
       - name: Run Bid.cars TOYOTA
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN__TOYOTA }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID__TOYOTA }}
+          TELEGRAM_BOT_TOKEN__TOYOTA: ${{ secrets.TELEGRAM_BOT_TOKEN__TOYOTA }}
+          TELEGRAM_CHAT_ID__TOYOTA: ${{ secrets.TELEGRAM_CHAT_ID__TOYOTA }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
         run: python toyota.py
