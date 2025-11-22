@@ -36,7 +36,7 @@ SEARCH_FILTERS = {
     'make': 'Lexus',
     'model': 'NX',
     'year-from': '2017',
-    'year-to': '2022',
+    'year-to': '2021',
     'auction-type': 'All',
     'odometer-to': '85000',
     'body-style': 'SUV',
