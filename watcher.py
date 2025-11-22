@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
 Bid.cars Lexus NX Watcher - One-time run
-Fetches all pages of Lexus NX listings and sends Telegram notifications for new listings.
+Monitors Bid.cars for new Lexus NX listings and sends Telegram notifications.
 """
 
 import os
 import json
 import time
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 from dotenv import load_dotenv
 import requests
@@ -36,9 +36,10 @@ SEARCH_FILTERS = {
     'make': 'Lexus',
     'model': 'NX',
     'year-from': '2017',
-    'year-to': '2021',
+    'year-to': '2022',
     'auction-type': 'All',
     'odometer-to': '85000',
+    'body-style': 'SUV',
     'drive-type': 'AWD'
 }
 
@@ -99,69 +100,57 @@ def get_redis_client():
     return UpstashRedis(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN)
 
 
-def fetch_all_listings() -> List[dict]:
-    """Fetch all pages of Lexus NX listings from Bid.cars using Playwright."""
-    all_listings = []
-    page_number = 1
+def fetch_listings() -> list[dict]:
+    """Fetch Lexus NX listings from Bid.cars using Playwright."""
+    params = {**SEARCH_FILTERS, "page": "1", "per-page": str(SEARCH_PAGE_SIZE)}
+    search_url = f"{SEARCH_PAGE_URL}?{'&'.join(f'{k}={v}' for k,v in params.items())}"
+    request_url = f"{SEARCH_ENDPOINT}?{'&'.join(f'{k}={v}' for k,v in params.items())}"
 
-    while True:
-        params = {**SEARCH_FILTERS, "page": str(page_number), "per-page": str(SEARCH_PAGE_SIZE)}
-        search_url = f"{SEARCH_PAGE_URL}?{'&'.join(f'{k}={v}' for k,v in params.items())}"
-        request_url = f"{SEARCH_ENDPOINT}?{'&'.join(f'{k}={v}' for k,v in params.items())}"
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            channel="chrome",
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+            ]
+        )
+        page = browser.new_page(user_agent=USER_AGENT, viewport={"width":1280, "height":720})
+        page.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            });
+        """)
+        page.goto(search_url, wait_until="networkidle", timeout=60000)
+        page.wait_for_timeout(5000)
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(
-                headless=True,
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                    "--disable-setuid-sandbox",
-                ]
-            )
-            page_obj = browser.new_page(user_agent=USER_AGENT, viewport={"width":1280, "height":720})
-            page_obj.add_init_script("""
-                Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-            """)
-            page_obj.goto(search_url, wait_until="networkidle", timeout=60000)
-            page_obj.wait_for_timeout(3000)
-
-            response = page_obj.evaluate(f"""
-                async () => {{
-                    const res = await fetch("{request_url}", {{
-                        method: "GET",
-                        headers: {{
-                            "Accept": "application/json, text/plain, */*",
-                            "X-Requested-With": "XMLHttpRequest",
-                            "User-Agent": "{USER_AGENT}"
-                        }},
-                        credentials: "include"
-                    }});
-                    const text = await res.text();
-                    return {{ status: res.status, body: text }};
-                }}
-            """)
-            page_obj.close()
-            browser.close()
+        response = page.evaluate(f"""
+            async () => {{
+                const res = await fetch("{request_url}", {{
+                    method: "GET",
+                    headers: {{
+                        "Accept": "application/json, text/plain, */*",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "User-Agent": "{USER_AGENT}"
+                    }},
+                    credentials: "include"
+                }});
+                const text = await res.text();
+                return {{ status: res.status, body: text }};
+            }}
+        """)
+        page.close()
+        browser.close()
 
         if response["status"] != 200:
-            raise Exception(f"Bid.cars request failed with status {response['status']}")
+            raise Exception(f"Bid.cars request failed with status {response['status']}, body preview: {response['body'][:200]}")
 
         payload = json.loads(response["body"])
-        data = payload.get("data", [])
-        if not data:
-            break
+        if not payload or "data" not in payload:
+            raise Exception("Unexpected Bid.cars payload format")
 
-        all_listings.extend(data)
-
-        # If fewer than full page, last page reached
-        if len(data) < SEARCH_PAGE_SIZE:
-            break
-
-        page_number += 1
-        time.sleep(1)  # avoid hitting server too fast
-
-    logger.info(f"[fetch_all_listings] Total listings fetched: {len(all_listings)}")
-    return all_listings
+        return payload["data"]
 
 
 def send_telegram_message(text: str) -> bool:
@@ -228,14 +217,14 @@ def run_check(dry_run: bool = False) -> Dict[str, Any]:
 
         if not is_init:
             logger.info('[check] First run: initializing storage')
-            listings = fetch_all_listings()
+            listings = fetch_listings()
             seen_lots = {listing.get('lot') for listing in listings if listing.get('lot')}
             if seen_lots:
                 redis.sadd(STORAGE_SEEN_KEY, *seen_lots)
             redis.set(STORAGE_INIT_KEY, '1')
             return {'sent': 0, 'reason': 'bootstrap', 'total': len(listings)}
 
-        listings = fetch_all_listings()
+        listings = fetch_listings()
         logger.info(f'[check] Fetched {len(listings)} listings')
         seen_lots = redis.smembers(STORAGE_SEEN_KEY)
         new_listings = [l for l in listings if l.get('lot') and l.get('lot') not in seen_lots]
@@ -268,6 +257,6 @@ if __name__ == '__main__':
         logger.error(f'Missing required environment variables: {", ".join(missing)}')
         exit(1)
 
-    logger.info('Starting one-time check for all pages...')
+    logger.info('Starting one-time check...')
     result = run_check()
     logger.info(f'Check completed: {result}')
