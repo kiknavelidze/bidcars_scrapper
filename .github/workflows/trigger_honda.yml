@@ -1,0 +1,33 @@
+name: Run Bid.cars HONDA
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # runs every 30 minutes
+  workflow_dispatch: # allows manual run
+
+jobs:
+  bidcars:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' # use your Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright requests python-dotenv
+          playwright install chromium
+
+      - name: Run Bid.cars HONDA
+        env:
+          TELEGRAM_BOT_TOKEN__HONDA: ${{ secrets.TELEGRAM_BOT_TOKEN__HONDA }}
+          TELEGRAM_CHAT_ID__HONDA: ${{ secrets.TELEGRAM_CHAT_ID__HONDA }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+        run: python honda.py
