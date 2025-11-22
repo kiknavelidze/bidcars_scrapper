@@ -122,7 +122,7 @@ def fetch_listings() -> list[dict]:
                 get: () => undefined
             });
         """)
-        page.goto(search_url, wait_until="networkidle", timeout=60000)
+        page.goto(search_url, wait_until="networkidle", timeout=300000)
         page.wait_for_timeout(5000)
 
         response = page.evaluate(f"""
