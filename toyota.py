@@ -245,7 +245,7 @@ def run_check(dry_run: bool = False) -> Dict[str, Any]:
 
 
 if __name__ == '__main__':
-    required = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
+    required = ['TELEGRAM_BOT_TOKEN__TOYOTA', 'TELEGRAM_CHAT_ID__TOYOTA', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']
     missing = [k for k in required if not os.getenv(k)]
     if missing:
         logger.error(f'Missing required environment variables: {", ".join(missing)}')
