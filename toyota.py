@@ -41,7 +41,7 @@ SEARCH_FILTERS = {
 SEARCH_PAGE_SIZE = 50
 STORAGE_SEEN_KEY = 'bidcars:seen-lots'
 STORAGE_INIT_KEY = 'bidcars:seen-initialized'
-TELEGRAM_MESSAGE_PREFIX = '🚗 ახალი Toyota (Bid.cars)'
+TELEGRAM_MESSAGE_PREFIX = '🚗 NEW TOYOTA (Bid.cars)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 
 # Environment variables
