@@ -50,8 +50,8 @@ TELEGRAM_MESSAGE_PREFIX = '🚗 ახალი Lexus NX (Bid.cars)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 
 # Environment variables
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN__NX')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID__NX')
 UPSTASH_REDIS_REST_URL = os.getenv('UPSTASH_REDIS_REST_URL')
 UPSTASH_REDIS_REST_TOKEN = os.getenv('UPSTASH_REDIS_REST_TOKEN')
 

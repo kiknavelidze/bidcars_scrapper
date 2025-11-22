@@ -1,4 +1,4 @@
-name: Run Bid.cars Watcher
+name: Run Bid.cars NX
 
 on:
   schedule:
@@ -24,10 +24,10 @@ jobs:
           pip install playwright requests python-dotenv
           playwright install chromium
 
-      - name: Run Bid.cars Watcher
+      - name: Run Bid.cars NX
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN__NX }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID__NX }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-        run: python watcher.py
+        run: python nx.py
