@@ -33,19 +33,17 @@ SEARCH_FILTERS = {
     'search-type': 'filters',
     'status': 'Fast-buy',
     'type': 'Automobile',
-    'make': 'Honda',
-    'model': 'CR-V',
-    'year-from': '2023',
-    'auction-type': 'All',
-    'odometer-to': '85000',
-    'body-style': 'SUV',
-    'drive-type': 'AWD'
+    'make': 'Jeep',
+    'model': 'Cherokee',
+    'year-from': '2017',
+    'year-to': '2020',
+    'auction-type': 'All'
 }
 
 SEARCH_PAGE_SIZE = 50
 STORAGE_SEEN_KEY = 'bidcars:seen-lots'
 STORAGE_INIT_KEY = 'bidcars:seen-initialized'
-TELEGRAM_MESSAGE_PREFIX = '🚗 NEW HONDA (Bid.cars)'
+TELEGRAM_MESSAGE_PREFIX = '🚗 NEW Cherokee (Bid.cars)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 
 # Environment variables
