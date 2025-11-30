@@ -37,7 +37,8 @@ SEARCH_FILTERS = {
     'model': 'Cherokee',
     'year-from': '2017',
     'year-to': '2020',
-    'auction-type': 'All'
+    'auction-type': 'All',
+    'drive-type': 'AWD'
 }
 
 SEARCH_PAGE_SIZE = 50
