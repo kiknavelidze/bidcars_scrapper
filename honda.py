@@ -30,15 +30,18 @@ SEARCH_ENDPOINT = f'{BID_CARS_BASE_URL}/app/search/request'
 SEARCH_PAGE_URL = f'{BID_CARS_BASE_URL}/en/search/results'
 
 SEARCH_FILTERS = {
-    'search-type': 'filters',
-    'status': 'Fast-buy',
-    'type': 'Automobile',
-    'make': 'Jeep',
-    'model': 'Cherokee',
-    'year-from': '2017',
-    'year-to': '2020',
-    'auction-type': 'All',
-    'drive-type': 'AWD'
+  'search-type': 'typing',
+  'query': 'jeep cherokee, trailhawk',
+  'status': 'All',
+  'make': 'All',
+  'model': 'All',
+  'year-from': '2016',
+  'year-to': '2020',
+  'auction-type': 'All',
+  'odometer-to': '150000',
+  'transmission': 'Automatic',
+  'engine-size-from': '3.2',
+  'engine-size-to': '3.2',
 }
 
 SEARCH_PAGE_SIZE = 50
