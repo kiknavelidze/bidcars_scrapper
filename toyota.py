@@ -30,12 +30,12 @@ SEARCH_FILTERS = {
     'status': 'Fast-buy',
     'type': 'Automobile',
     'make': 'Toyota',
-    'year-from': '2017',
+    'model': 'Camry',
+    'year-from': '2018',
+    'year-to': '2021',
     'auction-type': 'All',
-    'odometer-to': '85000',
-    'body-style': 'SUV',
-    'drive-type': 'AWD',
-    'fuel-type': 'Hybrid'
+    'odometer-to': '95000',
+    'fuel-type': 'Gasoline'
 }
 
 SEARCH_PAGE_SIZE = 50
